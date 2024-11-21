@@ -25,15 +25,12 @@ def load_private_key(path):
         private_key_pem = file.read()
     return RSA.import_key(private_key_pem)
 
-# Path ke file private.pem
 private_key_path = r"E:\OneDrive - Institut Teknologi Sepuluh Nopember\Dokumen\Keamanan Informasi\Tugas 3\private.pem"
 
-# Memuat kunci privat RSA
 private_key = load_private_key(private_key_path)
 
 print("Masukkan pesan yang ingin dienkripsi dan dikirim:")
 
-# Input pesan dari pengguna
 user_input = ""
 while True:
     char = getpass.getpass(prompt="")  
@@ -44,12 +41,10 @@ while True:
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
     
-    # Menerima kunci DES terenkripsi dari server
     encrypted_des_key = s.recv(256)  # Panjang buffer harus cukup
     print("Kunci DES terenkripsi diterima dari server.")
     
     try:
-        # Mendekripsi kunci DES menggunakan kunci privat RSA
         des_key = decrypt_des_key_with_rsa(private_key, encrypted_des_key)
         print("Kunci DES berhasil didekripsi.")
     except Exception as e:
@@ -57,9 +52,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.close()
         exit()
     
-    # Mengenkripsi pesan menggunakan kunci DES
     encrypted_message = encrypt_message(user_input, des_key)
     
-    # Mengirimkan pesan terenkripsi ke server
     s.sendall(encrypted_message.encode('utf-8'))
     print("Pesan telah terenkripsi dan dikirim ke server.")
