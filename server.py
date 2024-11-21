@@ -7,7 +7,7 @@ import base64
 HOST = '127.0.0.1'  
 PORT = 65434        
 
-key_des = b'1234567890123456'  # Key DES yang akan digunakan untuk enkripsi dan dekripsi pesan
+key_des = b'1234567890123456'  
 
 def decrypt_message(encrypted_message, key_des):
     encrypted_data = base64.b64decode(encrypted_message)
@@ -43,22 +43,17 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     with conn:
         print('Terhubung oleh', addr)
         
-        # Mengambil kunci publik dari PKA
         rsa_public_key = get_public_key_from_pka()
         
-        # Mengenkripsi kunci DES dengan RSA
         encrypted_des_key = encrypt_des_key_with_rsa(rsa_public_key, key_des)
         
-        # Mengirimkan kunci DES terenkripsi ke klien
         conn.sendall(encrypted_des_key)
         print("Kunci DES terenkripsi telah dikirim.")
         
-        # Menerima pesan terenkripsi dari klien
         encrypted_message = conn.recv(1024).decode('utf-8')
         print("Pesan terenkripsi:", encrypted_message)
         
         try:
-            # Mendekripsi pesan menggunakan kunci DES
             decrypted_message = decrypt_message(encrypted_message, key_des)
             print("Pesan didekripsi:", decrypted_message)
         except Exception as e:
